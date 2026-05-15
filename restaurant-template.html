@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurante — Plantilla</title>
+
+<!-- Default fonts (replaceable) -->
+<link rel="stylesheet" id="font-heading-link" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap">
+<link rel="stylesheet" id="font-body-link" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap">
+
+<style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLES — EDIT THESE TO CUSTOMIZE
+   ═══════════════════════════════════════════ */
+:root {
+  /* Colors */
+  --color-primary: #2C2C2C;
+  --color-accent: #C8A97E;
+  --color-accent-dark: #A8894E;
+  --color-bg: #FAFAF7;
+  --color-bg-alt: #F0EDE6;
+  --color-text: #2C2C2C;
+  --color-text-light: #6B6B6B;
+  --color-white: #FFFFFF;
+  --color-overlay: rgba(0,0,0,0.55);
+
+  /* Typography */
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', Helvetica, sans-serif;
+
+  /* Spacing */
+  --section-pad: clamp(60px, 10vw, 120px);
+  --container-max: 1200px;
+
+  /* Border radius */
+  --radius: 6px;
+  --radius-lg: 12px;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width:100%; display:block; }
+
+a { color: inherit; text-decoration: none; }
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════ */
+.nav {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  background: rgba(250,250,247,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.nav.scrolled {
+  background: rgba(250,250,247,0.98);
+  box-shadow: 0 2px 30px rgba(0,0,0,0.08);
+}
+
+.nav-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.nav-logo {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+}
+
+.nav-logo span { color: var(--color-accent); }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-light);
+  transition: color 0.3s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content:'';
+  position: absolute;
+  bottom: -4px; left:0;
+  width: 0; height: 2px;
+  background: var(--color-accent);
+  transition: width 0.3s;
+}
+
+.nav-links a:hover { color: var(--color-primary); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-cta {
+  background: var(--color-accent) !important;
+  color: var(--color-white) !important;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em;
+  transition: background 0.3s, transform 0.2s !important;
+}
+
+.nav-cta:hover {
+  background: var(--color-accent-dark) !important;
+  transform: translateY(-1px);
+}
+
+.nav-cta::after { display: none !important; }
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  width: 24px; height: 2px;
+  background: var(--color-primary);
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+
+.hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* Mobile nav */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-links {
+    position: fixed;
+    top: 0; right: -100%;
+    width: 80%; height: 100vh;
+    background: var(--color-bg);
+    flex-direction: column;
+    padding: 100px 40px;
+    gap: 24px;
+    transition: right 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: -10px 0 40px rgba(0,0,0,0.1);
+  }
+  .nav-links.open { right: 0; }
+  .nav-links a { font-size: 1.1rem; }
+}
+
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  transition: transform 8s ease;
+}
+
+.hero:hover .hero-bg { transform: scale(1.03); }
+
+.hero-overlay {
+  position: absolute;
+  inset:0;
+  background: var(--color-overlay);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: var(--color-white);
+  max-width: 800px;
+  padding: 0 24px;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 8px 20px;
+  border-radius: 50px;
+  margin-bottom: 28px;
+  color: var(--color-accent);
+}
+
+.hero h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.hero p {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 300;
+  opacity: 0.85;
+  max-width: 500px;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 36px;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(200,169,126,0.4);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-white);
+  border: 1.5px solid rgba(255,255,255,0.5);
+}
+
+.btn-outline:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: var(--color-white);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION COMMON
+   ═══════════════════════════════════════════ */
+.section { padding: var(--section-pad) 0; }
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+.section-desc {
+  font-size: 1.05rem;
+  color: var(--color-text-light);
+  max-width: 560px;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════
+   ABOUT
+   ═══════════════════════════════════════════ */
+.about { background: var(--color-bg); }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.about-image {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 4/5;
+}
+
+.about-image img {
+  width:100%; height:100%;
+  object-fit: cover;
+  transition: transform 0.6s;
+}
+
+.about-image:hover img { transform: scale(1.04); }
+
+.about-image::after {
+  content:'';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 120px; height: 120px;
+  background: var(--color-accent);
+  opacity: 0.15;
+  border-radius: 0 var(--radius-lg) 0 0;
+}
+
+.about-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 36px;
+  padding-top: 36px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+.stat-number {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .about-grid { grid-template-columns: 1fr; gap: 36px; }
+  .about-stats { gap: 24px; }
+}
+
+/* ═══════════════════════════════════════════
+   MENU / CARTA
+   ═══════════════════════════════════════════ */
+.menu-section { background: var(--color-bg-alt); }
+
+.menu-header { text-align: center; margin-bottom: 48px; }
+.menu-header .section-desc { margin: 0 auto; }
+
+.menu-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.menu-tab {
+  padding: 10px 28px;
+  border-radius: 50px;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: var(--color-text-light);
+}
+
+.menu-tab:hover, .menu-tab.active {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px;
+  background: var(--color-white);
+  border-radius: var(--radius);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.menu-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+
+.menu-item-name {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.menu-item-desc {
+  font-size: 0.85rem;
+  color: var(--color-text-light);
+  line-height: 1.5;
+}
+
+.menu-item-price {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  white-space: nowrap;
+  margin-left: 20px;
+}
+
+/* ═══════════════════════════════════════════
+   GALLERY / SLIDER
+   ═══════════════════════════════════════════ */
+.gallery { background: var(--color-bg); overflow: hidden; }
+
+.gallery-header { text-align: center; margin-bottom: 48px; }
+
+.gallery-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 24px 20px;
+  scrollbar-width: none;
+}
+
+.gallery-track::-webkit-scrollbar { display: none; }
+
+.gallery-slide {
+  flex: 0 0 auto;
+  width: min(400px, 80vw);
+  aspect-ratio: 3/4;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  scroll-snap-align: center;
+  position: relative;
+}
+
+.gallery-slide img {
+  width:100%; height:100%;
+  object-fit: cover;
+  transition: transform 0.6s;
+}
+
+.gallery-slide:hover img { transform: scale(1.06); }
+
+.gallery-slide-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 40px 24px 24px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.gallery-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.gallery-nav button {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,0.15);
+  background: var(--color-white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  font-size: 1.2rem;
+}
+
+.gallery-nav button:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+/* ═══════════════════════════════════════════
+   RESERVATION / CTA
+   ═══════════════════════════════════════════ */
+.reservation {
+  background: var(--color-primary);
+  color: var(--color-white);
+  text-align: center;
+}
+
+.reservation .section-label { color: var(--color-accent); }
+.reservation .section-title { color: var(--color-white); }
+.reservation .section-desc {
+  color: rgba(255,255,255,0.65);
+  margin: 0 auto 40px;
+}
+
+.reservation-info {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.reservation-item {
+  text-align: center;
+}
+
+.reservation-item-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.reservation-item-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+  margin-bottom: 4px;
+}
+
+.reservation-item-value {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.reservation .btn-primary {
+  font-size: 1rem;
+  padding: 18px 48px;
+}
+
+/* ═══════════════════════════════════════════
+   MAP
+   ═══════════════════════════════════════════ */
+.map-section { background: var(--color-bg-alt); }
+
+.map-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.08);
+}
+
+.map-embed {
+  min-height: 400px;
+}
+
+.map-embed iframe {
+  width: 100%; height: 100%;
+  border: 0;
+}
+
+.map-info {
+  background: var(--color-white);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.map-info h3 {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.map-detail {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.map-detail-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.map-detail-text {
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+  line-height: 1.6;
+}
+
+.map-detail-text strong {
+  color: var(--color-text);
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: gap 0.3s;
+}
+
+.map-link:hover { gap: 14px; }
+
+@media (max-width: 768px) {
+  .map-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+.footer {
+  background: var(--color-primary);
+  color: rgba(255,255,255,0.6);
+  padding: 60px 0 32px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-brand .nav-logo {
+  color: var(--color-white);
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.footer-brand p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  max-width: 280px;
+}
+
+.footer h4 {
+  color: var(--color-white);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.footer ul { list-style: none; }
+.footer ul li { margin-bottom: 10px; }
+.footer ul a {
+  font-size: 0.88rem;
+  transition: color 0.3s;
+}
+.footer ul a:hover { color: var(--color-accent); }
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.footer-social a {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.footer-social a:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-white);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 24px;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════
+   EDITOR PANEL
+   ═══════════════════════════════════════════ */
+.editor-toggle {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-white);
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(200,169,126,0.5);
+  transition: transform 0.3s;
+}
+
+.editor-toggle:hover { transform: scale(1.1); }
+
+.editor-panel {
+  position: fixed;
+  top: 0; right: -420px;
+  width: 400px; height: 100vh;
+  background: #1a1a1a;
+  color: #e0e0e0;
+  z-index: 9998;
+  overflow-y: auto;
+  transition: right 0.4s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: -10px 0 40px rgba(0,0,0,0.3);
+  padding: 24px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.editor-panel.open { right: 0; }
+
+.editor-panel h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.editor-panel h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+  margin: 28px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.editor-field {
+  margin-bottom: 14px;
+}
+
+.editor-field label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.editor-field input[type="text"],
+.editor-field input[type="url"],
+.editor-field input[type="tel"],
+.editor-field textarea,
+.editor-field select {
+  width: 100%;
+  padding: 10px 14px;
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: var(--radius);
+  color: #e0e0e0;
+  font-family: inherit;
+  font-size: 0.88rem;
+  transition: border-color 0.3s;
+}
+
+.editor-field input:focus,
+.editor-field textarea:focus,
+.editor-field select:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.editor-field textarea { resize: vertical; min-height: 60px; }
+
+.editor-field input[type="color"] {
+  width: 100%;
+  height: 40px;
+  padding: 2px;
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.editor-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.editor-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius);
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 8px;
+}
+
+.editor-btn-primary {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.editor-btn-primary:hover { background: var(--color-accent-dark); }
+
+.editor-btn-secondary {
+  background: #333;
+  color: #e0e0e0;
+}
+
+.editor-btn-secondary:hover { background: #444; }
+
+.editor-note {
+  font-size: 0.72rem;
+  color: #666;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .editor-panel { width: 100%; right: -100%; }
+}
+
+/* custom font face placeholder */
+.custom-font-face {}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" data-editable="brand_name">La Buena<span>Mesa</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">Nosotros</a></li>
+      <li><a href="#menu">Carta</a></li>
+      <li><a href="#gallery">Galería</a></li>
+      <li><a href="#map">Ubicación</a></li>
+      <li><a href="#reservation" class="nav-cta">Reservar</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge" data-editable="hero_badge">Cocina de autor</div>
+    <h1 data-editable="hero_title">Donde cada plato cuenta una historia</h1>
+    <p data-editable="hero_subtitle">Sabores auténticos en un espacio único. Descubre nuestra carta y déjate sorprender.</p>
+    <div class="hero-buttons">
+      <a href="#menu" class="btn btn-primary">Ver Carta</a>
+      <a href="#reservation" class="btn btn-outline">Reservar Mesa</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<section class="section about" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-image fade-in">
+        <img id="aboutImg" src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80" alt="Interior del restaurante">
+      </div>
+      <div class="fade-in">
+        <div class="section-label">Nuestra historia</div>
+        <h2 class="section-title" data-editable="about_title">Tradición e innovación en cada bocado</h2>
+        <p class="section-desc" data-editable="about_text">Fundado en 2010, nuestro restaurante fusiona la cocina tradicional con técnicas modernas. Cada ingrediente es seleccionado cuidadosamente de productores locales para ofrecerte una experiencia gastronómica inolvidable.</p>
+        <div class="about-stats">
+          <div>
+            <div class="stat-number" data-editable="stat_1_number">14</div>
+            <div class="stat-label" data-editable="stat_1_label">Años de experiencia</div>
+          </div>
+          <div>
+            <div class="stat-number" data-editable="stat_2_number">50k+</div>
+            <div class="stat-label" data-editable="stat_2_label">Clientes felices</div>
+          </div>
+          <div>
+            <div class="stat-number" data-editable="stat_3_number">4.8</div>
+            <div class="stat-label" data-editable="stat_3_label">Valoración Google</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MENU ═══════════════ -->
+<section class="section menu-section" id="menu">
+  <div class="container">
+    <div class="menu-header fade-in">
+      <div class="section-label">Nuestra carta</div>
+      <h2 class="section-title">Platos que enamoran</h2>
+      <p class="section-desc">Ingredientes frescos, recetas con alma y presentaciones que sorprenden.</p>
+    </div>
+
+    <div class="menu-tabs fade-in">
+      <button class="menu-tab active" onclick="filterMenu('all')">Todo</button>
+      <button class="menu-tab" onclick="filterMenu('entrantes')">Entrantes</button>
+      <button class="menu-tab" onclick="filterMenu('principales')">Principales</button>
+      <button class="menu-tab" onclick="filterMenu('postres')">Postres</button>
+    </div>
+
+    <div class="menu-grid fade-in" id="menuGrid">
+      <!-- Items populated by JS for easy editing -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ GALLERY ═══════════════ -->
+<section class="section gallery" id="gallery">
+  <div class="container">
+    <div class="gallery-header fade-in">
+      <div class="section-label">Galería</div>
+      <h2 class="section-title">Un vistazo a nuestra cocina</h2>
+    </div>
+  </div>
+  <div class="gallery-track fade-in" id="galleryTrack">
+    <div class="gallery-slide">
+      <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80" alt="Plato 1">
+      <div class="gallery-slide-caption">Ensalada Mediterránea</div>
+    </div>
+    <div class="gallery-slide">
+      <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" alt="Plato 2">
+      <div class="gallery-slide-caption">Pizza Artesanal</div>
+    </div>
+    <div class="gallery-slide">
+      <img src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=600&q=80" alt="Plato 3">
+      <div class="gallery-slide-caption">Huevos Benedict</div>
+    </div>
+    <div class="gallery-slide">
+      <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80" alt="Plato 4">
+      <div class="gallery-slide-caption">Filete a la Parrilla</div>
+    </div>
+    <div class="gallery-slide">
+      <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600&q=80" alt="Plato 5">
+      <div class="gallery-slide-caption">Tarta de Queso</div>
+    </div>
+  </div>
+  <div class="gallery-nav">
+    <button onclick="scrollGallery(-1)">←</button>
+    <button onclick="scrollGallery(1)">→</button>
+  </div>
+</section>
+
+<!-- ═══════════════ RESERVATION ═══════════════ -->
+<section class="section reservation" id="reservation">
+  <div class="container fade-in">
+    <div class="section-label">Reservas</div>
+    <h2 class="section-title">Tu mesa te espera</h2>
+    <p class="section-desc">Reserva por teléfono o WhatsApp y asegura tu lugar.</p>
+
+    <div class="reservation-info">
+      <div class="reservation-item">
+        <div class="reservation-item-icon">📞</div>
+        <div class="reservation-item-label">Teléfono</div>
+        <div class="reservation-item-value" data-editable="phone">+34 912 345 678</div>
+      </div>
+      <div class="reservation-item">
+        <div class="reservation-item-icon">💬</div>
+        <div class="reservation-item-label">WhatsApp</div>
+        <div class="reservation-item-value" data-editable="whatsapp">+34 612 345 678</div>
+      </div>
+      <div class="reservation-item">
+        <div class="reservation-item-icon">🕐</div>
+        <div class="reservation-item-label">Horario</div>
+        <div class="reservation-item-value" data-editable="hours">Mar–Dom · 13:00–23:00</div>
+      </div>
+    </div>
+
+    <a href="tel:+34912345678" class="btn btn-primary" id="callBtn">📞 Llamar para Reservar</a>
+  </div>
+</section>
+
+<!-- ═══════════════ MAP ═══════════════ -->
+<section class="section map-section" id="map">
+  <div class="container">
+    <div class="map-grid fade-in">
+      <div class="map-embed">
+        <iframe id="mapIframe"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3037.6!2d-3.7037!3d40.4168!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDI1JzAwLjQiTiAzwrA0MicxMy4zIlc!5e0!3m2!1ses!2ses!4v1"
+          allowfullscreen loading="lazy">
+        </iframe>
+      </div>
+      <div class="map-info">
+        <h3 data-editable="map_title">Ven a visitarnos</h3>
+        <div class="map-detail">
+          <span class="map-detail-icon">📍</span>
+          <div class="map-detail-text">
+            <strong>Dirección</strong>
+            <span data-editable="address">Calle Gran Vía 42, 28013 Madrid</span>
+          </div>
+        </div>
+        <div class="map-detail">
+          <span class="map-detail-icon">🚇</span>
+          <div class="map-detail-text">
+            <strong>Cómo llegar</strong>
+            <span data-editable="transport">Metro: Gran Vía (L1, L5) · Bus: 1, 2, 46</span>
+          </div>
+        </div>
+        <div class="map-detail">
+          <span class="map-detail-icon">🅿️</span>
+          <div class="map-detail-text">
+            <strong>Aparcamiento</strong>
+            <span data-editable="parking">Parking público a 50m</span>
+          </div>
+        </div>
+        <a href="https://maps.google.com" target="_blank" class="map-link" id="gmapsLink">
+          Abrir en Google Maps →
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo" data-editable="brand_name_footer">La Buena<span>Mesa</span></a>
+        <p data-editable="footer_desc">Cocina de autor con productos de temporada en el corazón de Madrid.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram" id="igLink">📷</a>
+          <a href="#" aria-label="Facebook" id="fbLink">📘</a>
+          <a href="#" aria-label="TripAdvisor" id="taLink">✈️</a>
+        </div>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="#about">Nosotros</a></li>
+          <li><a href="#menu">Carta</a></li>
+          <li><a href="#gallery">Galería</a></li>
+          <li><a href="#reservation">Reservar</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="tel:+34912345678" data-editable="footer_phone">+34 912 345 678</a></li>
+          <li><a href="mailto:info@labuenamesa.es" data-editable="footer_email">info@labuenamesa.es</a></li>
+          <li><span data-editable="footer_address">C/ Gran Vía 42, Madrid</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Horario</h4>
+        <ul>
+          <li>Martes – Viernes</li>
+          <li data-editable="hours_weekday">13:00 – 16:00 / 20:00 – 23:00</li>
+          <li style="margin-top:12px">Sábado – Domingo</li>
+          <li data-editable="hours_weekend">13:00 – 23:00</li>
+          <li style="margin-top:12px;color:var(--color-accent)">Lunes cerrado</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © <span id="currentYear"></span> <span data-editable="legal_name">La Buena Mesa</span>. Todos los derechos reservados.
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════ EDITOR PANEL ═══════════════ -->
+<button class="editor-toggle" id="editorToggle" title="Abrir editor">⚙️</button>
+
+<div class="editor-panel" id="editorPanel">
+  <h2>🎨 Editor de Plantilla</h2>
+  <p style="font-size:0.8rem;color:#888;margin-bottom:8px;">Personaliza todo y exporta el HTML listo.</p>
+
+  <!-- COLORS -->
+  <h3>🎨 Colores</h3>
+  <div class="editor-row">
+    <div class="editor-field">
+      <label>Acento principal</label>
+      <input type="color" id="ed_colorAccent" value="#C8A97E" onchange="updateColor('--color-accent', this.value)">
+    </div>
+    <div class="editor-field">
+      <label>Fondo</label>
+      <input type="color" id="ed_colorBg" value="#FAFAF7" onchange="updateColor('--color-bg', this.value)">
+    </div>
+  </div>
+  <div class="editor-row">
+    <div class="editor-field">
+      <label>Texto principal</label>
+      <input type="color" id="ed_colorText" value="#2C2C2C" onchange="updateColor('--color-text', this.value)">
+    </div>
+    <div class="editor-field">
+      <label>Fondo oscuro (footer/reservas)</label>
+      <input type="color" id="ed_colorPrimary" value="#2C2C2C" onchange="updateColor('--color-primary', this.value)">
+    </div>
+  </div>
+  <div class="editor-field">
+    <label>Fondo alternativo (secciones)</label>
+    <input type="color" id="ed_colorBgAlt" value="#F0EDE6" onchange="updateColor('--color-bg-alt', this.value)">
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <h3>✏️ Tipografías</h3>
+  <div class="editor-field">
+    <label>Fuente de títulos</label>
+    <select id="ed_fontHeading" onchange="updateFont('heading', this.value)">
+      <option value="Playfair Display">Playfair Display</option>
+      <option value="Cormorant Garamond">Cormorant Garamond</option>
+      <option value="Libre Baskerville">Libre Baskerville</option>
+      <option value="Lora">Lora</option>
+      <option value="Merriweather">Merriweather</option>
+      <option value="Cinzel">Cinzel</option>
+      <option value="Prata">Prata</option>
+      <option value="DM Serif Display">DM Serif Display</option>
+      <option value="Fraunces">Fraunces</option>
+      <option value="__custom__">📁 Fuente personalizada (OTF/TTF)...</option>
+    </select>
+  </div>
+  <div class="editor-field">
+    <label>Fuente de cuerpo</label>
+    <select id="ed_fontBody" onchange="updateFont('body', this.value)">
+      <option value="DM Sans">DM Sans</option>
+      <option value="Inter">Inter</option>
+      <option value="Source Sans 3">Source Sans 3</option>
+      <option value="Nunito Sans">Nunito Sans</option>
+      <option value="Outfit">Outfit</option>
+      <option value="Raleway">Raleway</option>
+      <option value="Work Sans">Work Sans</option>
+      <option value="Jost">Jost</option>
+      <option value="__custom__">📁 Fuente personalizada (OTF/TTF)...</option>
+    </select>
+  </div>
+  <div class="editor-field" id="customFontSection" style="display:none">
+    <label>Cargar fuente OTF/TTF</label>
+    <input type="file" accept=".otf,.ttf,.woff,.woff2" id="customFontFile" onchange="loadCustomFont(this)" style="color:#999;font-size:0.85rem;">
+    <div class="editor-note">Se creará una carpeta /fonts en la exportación.</div>
+  </div>
+
+  <!-- IMAGES -->
+  <h3>📷 Imágenes</h3>
+  <div class="editor-field">
+    <label>Hero (fondo principal)</label>
+    <input type="file" accept="image/*" onchange="updateImage('hero', this)" style="color:#999;font-size:0.85rem;">
+    <input type="url" placeholder="…o URL de la imagen" onchange="updateImageUrl('hero', this.value)" style="margin-top:6px">
+  </div>
+  <div class="editor-field">
+    <label>Foto "Nosotros"</label>
+    <input type="file" accept="image/*" onchange="updateImage('about', this)" style="color:#999;font-size:0.85rem;">
+    <input type="url" placeholder="…o URL de la imagen" onchange="updateImageUrl('about', this.value)" style="margin-top:6px">
+  </div>
+  <div class="editor-field">
+    <label>Galería — Añadir imagen</label>
+    <input type="file" accept="image/*" onchange="addGalleryImage(this)" style="color:#999;font-size:0.85rem;">
+    <input type="text" placeholder="Título de la foto" id="newSlideCaption" style="margin-top:6px">
+    <button class="editor-btn editor-btn-secondary" style="margin-top:6px" onclick="addGalleryFromUrl()">+ Añadir desde URL</button>
+    <div class="editor-note">Puedes añadir tantas como quieras.</div>
+  </div>
+
+  <!-- CONTENT -->
+  <h3>📝 Contenidos</h3>
+  <div class="editor-field">
+    <label>Nombre del restaurante</label>
+    <input type="text" id="ed_brandName" value="La Buena Mesa" onchange="updateBrand(this.value)">
+  </div>
+  <div class="editor-field">
+    <label>Subtítulo hero (badge)</label>
+    <input type="text" id="ed_heroBadge" value="Cocina de autor" onchange="updateEditable('hero_badge', this.value)">
+  </div>
+  <div class="editor-field">
+    <label>Título hero</label>
+    <input type="text" id="ed_heroTitle" value="Donde cada plato cuenta una historia" onchange="updateEditable('hero_title', this.value)">
+  </div>
+  <div class="editor-field">
+    <label>Descripción hero</label>
+    <textarea id="ed_heroSubtitle" onchange="updateEditable('hero_subtitle', this.value)">Sabores auténticos en un espacio único. Descubre nuestra carta y déjate sorprender.</textarea>
+  </div>
+
+  <!-- CONTACT -->
+  <h3>📞 Contacto</h3>
+  <div class="editor-field">
+    <label>Teléfono</label>
+    <input type="tel" id="ed_phone" value="+34 912 345 678" onchange="updateContact('phone', this.value)">
+  </div>
+  <div class="editor-field">
+    <label>WhatsApp</label>
+    <input type="tel" id="ed_whatsapp" value="+34 612 345 678" onchange="updateContact('whatsapp', this.value)">
+  </div>
+  <div class="editor-field">
+    <label>Email</label>
+    <input type="text" id="ed_email" value="info@labuenamesa.es" onchange="updateContact('email', this.value)">
+  </div>
+  <div class="editor-field">
+    <label>Dirección</label>
+    <input type="text" id="ed_address" value="Calle Gran Vía 42, 28013 Madrid" onchange="updateEditable('address', this.value)">
+  </div>
+  <div class="editor-field">
+    <label>Google Maps embed URL</label>
+    <input type="url" id="ed_mapUrl" placeholder="Pega URL de Google Maps embed" onchange="updateMap(this.value)">
+    <div class="editor-note">En Google Maps → Compartir → Insertar mapa → Copia la URL del src del iframe.</div>
+  </div>
+  <div class="editor-field">
+    <label>Google Maps link (para abrir)</label>
+    <input type="url" id="ed_mapLink" placeholder="https://maps.google.com/..." onchange="document.getElementById('gmapsLink').href=this.value">
+  </div>
+
+  <!-- SOCIAL -->
+  <h3>🌐 Redes sociales</h3>
+  <div class="editor-field">
+    <label>Instagram URL</label>
+    <input type="url" id="ed_ig" placeholder="https://instagram.com/..." onchange="document.getElementById('igLink').href=this.value">
+  </div>
+  <div class="editor-field">
+    <label>Facebook URL</label>
+    <input type="url" id="ed_fb" placeholder="https://facebook.com/..." onchange="document.getElementById('fbLink').href=this.value">
+  </div>
+  <div class="editor-field">
+    <label>TripAdvisor URL</label>
+    <input type="url" id="ed_ta" placeholder="https://tripadvisor.com/..." onchange="document.getElementById('taLink').href=this.value">
+  </div>
+
+  <!-- MENU ITEMS -->
+  <h3>🍽️ Carta — Platos</h3>
+  <div id="menuEditor"></div>
+  <button class="editor-btn editor-btn-secondary" onclick="addMenuItem()">+ Añadir plato</button>
+
+  <!-- EXPORT -->
+  <h3>💾 Exportar</h3>
+  <button class="editor-btn editor-btn-primary" onclick="exportHTML()">⬇ Descargar HTML final</button>
+  <div class="editor-note" style="margin-top:8px">
+    Genera un archivo .html limpio sin el editor, listo para subir a GitHub Pages o cualquier servidor. Si usaste fuentes OTF/TTF, recuerda crear la carpeta /fonts con los archivos.
+  </div>
+  <button class="editor-btn editor-btn-secondary" style="margin-top:12px" onclick="exportConfig()">💾 Guardar configuración (JSON)</button>
+  <button class="editor-btn editor-btn-secondary" style="margin-top:8px" onclick="importConfig()">📂 Cargar configuración</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// MENU DATA
+// ═══════════════════════════════════════════
+let menuItems = [
+  { name: 'Croquetas de Jamón Ibérico', desc: 'Cremosas por dentro, crujientes por fuera', price: '12€', cat: 'entrantes' },
+  { name: 'Tartar de Atún Rojo', desc: 'Con aguacate, sésamo y salsa ponzu', price: '16€', cat: 'entrantes' },
+  { name: 'Gazpacho Andaluz', desc: 'Tomate de temporada con guarnición', price: '9€', cat: 'entrantes' },
+  { name: 'Solomillo a la Brasa', desc: 'Con reducción de Pedro Ximénez y patata trufada', price: '28€', cat: 'principales' },
+  { name: 'Arroz Meloso de Bogavante', desc: 'Arroz bomba con caldo de marisco', price: '32€', cat: 'principales' },
+  { name: 'Merluza de Pincho', desc: 'Con salsa verde y almejas', price: '24€', cat: 'principales' },
+  { name: 'Coulant de Chocolate', desc: 'Con helado de vainilla de Madagascar', price: '10€', cat: 'postres' },
+  { name: 'Tarta de Queso Vasca', desc: 'Nuestra receta secreta, textura inigualable', price: '9€', cat: 'postres' },
+];
+
+let currentFilter = 'all';
+
+function renderMenu() {
+  const grid = document.getElementById('menuGrid');
+  const filtered = currentFilter === 'all' ? menuItems : menuItems.filter(i => i.cat === currentFilter);
+  grid.innerHTML = filtered.map((item, i) => `
+    <div class="menu-item" data-cat="${item.cat}">
+      <div>
+        <div class="menu-item-name">${item.name}</div>
+        <div class="menu-item-desc">${item.desc}</div>
+      </div>
+      <div class="menu-item-price">${item.price}</div>
+    </div>
+  `).join('');
+}
+
+function filterMenu(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderMenu();
+}
+
+function renderMenuEditor() {
+  const container = document.getElementById('menuEditor');
+  container.innerHTML = menuItems.map((item, i) => `
+    <div style="background:#222;border-radius:6px;padding:12px;margin-bottom:8px;">
+      <div class="editor-row" style="margin-bottom:6px">
+        <input type="text" value="${item.name}" placeholder="Nombre" onchange="menuItems[${i}].name=this.value;renderMenu()">
+        <input type="text" value="${item.price}" placeholder="Precio" onchange="menuItems[${i}].price=this.value;renderMenu()">
+      </div>
+      <input type="text" value="${item.desc}" placeholder="Descripción" onchange="menuItems[${i}].desc=this.value;renderMenu()" style="width:100%;margin-bottom:6px;padding:8px 12px;background:#2a2a2a;border:1px solid #3a3a3a;border-radius:4px;color:#e0e0e0;font-size:0.85rem;">
+      <div class="editor-row">
+        <select onchange="menuItems[${i}].cat=this.value;renderMenu()" style="padding:8px 12px;background:#2a2a2a;border:1px solid #3a3a3a;border-radius:4px;color:#e0e0e0;">
+          <option value="entrantes" ${item.cat==='entrantes'?'selected':''}>Entrantes</option>
+          <option value="principales" ${item.cat==='principales'?'selected':''}>Principales</option>
+          <option value="postres" ${item.cat==='postres'?'selected':''}>Postres</option>
+        </select>
+        <button onclick="menuItems.splice(${i},1);renderMenu();renderMenuEditor()" style="padding:8px;background:#553333;border:none;border-radius:4px;color:#ff8888;cursor:pointer;font-size:0.85rem;">🗑 Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addMenuItem() {
+  menuItems.push({ name: 'Nuevo plato', desc: 'Descripción', price: '0€', cat: 'entrantes' });
+  renderMenu();
+  renderMenuEditor();
+}
+
+// ═══════════════════════════════════════════
+// NAV & SCROLL
+// ═══════════════════════════════════════════
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  navLinks.classList.toggle('open');
+});
+
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    navLinks.classList.remove('open');
+  });
+});
+
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Fade-in observer
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+// Year
+document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+// ═══════════════════════════════════════════
+// GALLERY
+// ═══════════════════════════════════════════
+function scrollGallery(dir) {
+  const track = document.getElementById('galleryTrack');
+  track.scrollBy({ left: dir * 420, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════
+// EDITOR FUNCTIONS
+// ═══════════════════════════════════════════
+const editorToggle = document.getElementById('editorToggle');
+const editorPanel = document.getElementById('editorPanel');
+
+editorToggle.addEventListener('click', () => {
+  editorPanel.classList.toggle('open');
+});
+
+function updateColor(varName, value) {
+  document.documentElement.style.setProperty(varName, value);
+  // derive accent-dark
+  if (varName === '--color-accent') {
+    const r = parseInt(value.slice(1,3),16), g = parseInt(value.slice(3,5),16), b = parseInt(value.slice(5,7),16);
+    const dark = '#' + [r,g,b].map(c => Math.max(0, c-30).toString(16).padStart(2,'0')).join('');
+    document.documentElement.style.setProperty('--color-accent-dark', dark);
+  }
+}
+
+// Custom fonts tracking
+let customFonts = {};
+
+function updateFont(type, fontName) {
+  if (fontName === '__custom__') {
+    document.getElementById('customFontSection').style.display = 'block';
+    document.getElementById('customFontFile').dataset.target = type;
+    return;
+  }
+  const varName = type === 'heading' ? '--font-heading' : '--font-body';
+  const linkId = type === 'heading' ? 'font-heading-link' : 'font-body-link';
+  const link = document.getElementById(linkId);
+  link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@300;400;500;600;700;900&display=swap`;
+  document.documentElement.style.setProperty(varName, `'${fontName}', serif`);
+}
+
+function loadCustomFont(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const target = input.dataset.target || 'heading';
+  const fontName = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const fontFace = new FontFace(fontName, e.target.result);
+    fontFace.load().then(function(loaded) {
+      document.fonts.add(loaded);
+      const varName = target === 'heading' ? '--font-heading' : '--font-body';
+      document.documentElement.style.setProperty(varName, `'${fontName}', serif`);
+      customFonts[target] = { name: fontName, fileName: file.name, data: e.target.result };
+    });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function updateImage(target, input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    if (target === 'hero') {
+      document.getElementById('heroBg').style.backgroundImage = `url('${e.target.result}')`;
+    } else if (target === 'about') {
+      document.getElementById('aboutImg').src = e.target.result;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateImageUrl(target, url) {
+  if (!url) return;
+  if (target === 'hero') {
+    document.getElementById('heroBg').style.backgroundImage = `url('${url}')`;
+  } else if (target === 'about') {
+    document.getElementById('aboutImg').src = url;
+  }
+}
+
+function addGalleryImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const caption = document.getElementById('newSlideCaption').value || 'Nueva foto';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const slide = document.createElement('div');
+    slide.className = 'gallery-slide';
+    slide.innerHTML = `<img src="${e.target.result}" alt="${caption}"><div class="gallery-slide-caption">${caption}</div>`;
+    document.getElementById('galleryTrack').appendChild(slide);
+  };
+  reader.readAsDataURL(file);
+}
+
+function addGalleryFromUrl() {
+  const caption = document.getElementById('newSlideCaption').value || 'Nueva foto';
+  const url = prompt('URL de la imagen:');
+  if (!url) return;
+  const slide = document.createElement('div');
+  slide.className = 'gallery-slide';
+  slide.innerHTML = `<img src="${url}" alt="${caption}"><div class="gallery-slide-caption">${caption}</div>`;
+  document.getElementById('galleryTrack').appendChild(slide);
+}
+
+function updateEditable(key, value) {
+  document.querySelectorAll(`[data-editable="${key}"]`).forEach(el => {
+    el.textContent = value;
+  });
+}
+
+function updateBrand(name) {
+  // Split at last word for accent
+  const words = name.split(' ');
+  const last = words.pop();
+  const first = words.join(' ');
+  document.querySelectorAll('[data-editable="brand_name"], [data-editable="brand_name_footer"]').forEach(el => {
+    el.innerHTML = first ? `${first} <span>${last}</span>` : `<span>${name}</span>`;
+  });
+  document.title = name + ' — Restaurante';
+}
+
+function updateContact(type, value) {
+  if (type === 'phone') {
+    updateEditable('phone', value);
+    document.querySelector('[data-editable="footer_phone"]').textContent = value;
+    const clean = value.replace(/\s/g, '');
+    document.getElementById('callBtn').href = `tel:${clean}`;
+  } else if (type === 'whatsapp') {
+    updateEditable('whatsapp', value);
+  } else if (type === 'email') {
+    const el = document.querySelector('[data-editable="footer_email"]');
+    el.textContent = value;
+    el.href = `mailto:${value}`;
+  }
+}
+
+function updateMap(url) {
+  if (url) document.getElementById('mapIframe').src = url;
+}
+
+// ═══════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════
+function exportHTML() {
+  // Clone document
+  const clone = document.documentElement.cloneNode(true);
+
+  // Remove editor elements
+  const edPanel = clone.querySelector('.editor-panel');
+  const edToggle = clone.querySelector('.editor-toggle');
+  if (edPanel) edPanel.remove();
+  if (edToggle) edToggle.remove();
+
+  // Remove editor-related script by replacing with clean version
+  // Grab computed CSS vars
+  const cs = getComputedStyle(document.documentElement);
+  const vars = [
+    '--color-primary', '--color-accent', '--color-accent-dark',
+    '--color-bg', '--color-bg-alt', '--color-text', '--color-text-light',
+    '--color-white', '--color-overlay', '--font-heading', '--font-body'
+  ];
+
+  // Update :root in style
+  let styleEl = clone.querySelector('style');
+  let styleText = styleEl.textContent;
+
+  vars.forEach(v => {
+    const val = cs.getPropertyValue(v).trim();
+    const regex = new RegExp(`(${v.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}):\\s*[^;]+;`);
+    styleText = styleText.replace(regex, `${v}: ${val};`);
+  });
+
+  // Remove editor CSS
+  styleText = styleText.replace(/\/\*[\s\S]*?EDITOR PANEL[\s\S]*?@media \(max-width: 480px\)\s*\{[^}]*\.editor-panel[^}]*\}[^}]*\}/g, '');
+
+  styleEl.textContent = styleText;
+
+  // Update hero bg
+  const heroBgEl = clone.querySelector('#heroBg');
+  const currentBg = document.getElementById('heroBg').style.backgroundImage;
+  if (currentBg) {
+    heroBgEl.style.backgroundImage = currentBg;
+  }
+
+  // Update about image
+  const aboutImgEl = clone.querySelector('#aboutImg');
+  aboutImgEl.src = document.getElementById('aboutImg').src;
+
+  // Update gallery
+  const galleryTrack = clone.querySelector('#galleryTrack');
+  galleryTrack.innerHTML = document.getElementById('galleryTrack').innerHTML;
+
+  // Update menu with current items
+  const menuGridClone = clone.querySelector('#menuGrid');
+  menuGridClone.innerHTML = document.getElementById('menuGrid').innerHTML;
+
+  // Clean up scripts — replace with minimal production script
+  const scripts = clone.querySelectorAll('script');
+  scripts.forEach(s => s.remove());
+
+  const prodScript = document.createElement('script');
+  prodScript.textContent = `
+// Menu data
+const menuItems = ${JSON.stringify(menuItems)};
+let currentFilter = 'all';
+
+function renderMenu() {
+  const grid = document.getElementById('menuGrid');
+  const filtered = currentFilter === 'all' ? menuItems : menuItems.filter(i => i.cat === currentFilter);
+  grid.innerHTML = filtered.map(item => \`
+    <div class="menu-item" data-cat="\${item.cat}">
+      <div>
+        <div class="menu-item-name">\${item.name}</div>
+        <div class="menu-item-desc">\${item.desc}</div>
+      </div>
+      <div class="menu-item-price">\${item.price}</div>
+    </div>
+  \`).join('');
+}
+
+function filterMenu(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderMenu();
+}
+
+// Nav
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  navLinks.classList.toggle('open');
+});
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    navLinks.classList.remove('open');
+  });
+});
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Fade in
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15 });
+document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+
+// Year
+document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+// Gallery scroll
+function scrollGallery(dir) {
+  document.getElementById('galleryTrack').scrollBy({ left: dir * 420, behavior: 'smooth' });
+}
+
+renderMenu();
+`;
+  clone.querySelector('body').appendChild(prodScript);
+
+  // Build custom font @font-face if needed
+  let fontFaces = '';
+  Object.keys(customFonts).forEach(target => {
+    const f = customFonts[target];
+    fontFaces += `\n/* Custom font: ${f.name} — place ${f.fileName} in /fonts/ folder */\n@font-face {\n  font-family: '${f.name}';\n  src: url('fonts/${f.fileName}');\n  font-weight: 100 900;\n  font-display: swap;\n}\n`;
+  });
+  if (fontFaces) {
+    const existingStyle = clone.querySelector('style');
+    existingStyle.textContent = fontFaces + existingStyle.textContent;
+  }
+
+  // Serialize
+  const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'restaurante.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportConfig() {
+  const cs = getComputedStyle(document.documentElement);
+  const config = {
+    colors: {
+      accent: document.getElementById('ed_colorAccent').value,
+      bg: document.getElementById('ed_colorBg').value,
+      text: document.getElementById('ed_colorText').value,
+      primary: document.getElementById('ed_colorPrimary').value,
+      bgAlt: document.getElementById('ed_colorBgAlt').value,
+    },
+    fonts: {
+      heading: document.getElementById('ed_fontHeading').value,
+      body: document.getElementById('ed_fontBody').value,
+    },
+    content: {
+      brandName: document.getElementById('ed_brandName').value,
+      heroBadge: document.getElementById('ed_heroBadge').value,
+      heroTitle: document.getElementById('ed_heroTitle').value,
+      heroSubtitle: document.getElementById('ed_heroSubtitle').value,
+      phone: document.getElementById('ed_phone').value,
+      whatsapp: document.getElementById('ed_whatsapp').value,
+      email: document.getElementById('ed_email').value,
+      address: document.getElementById('ed_address').value,
+    },
+    menuItems: menuItems,
+    social: {
+      ig: document.getElementById('ed_ig').value,
+      fb: document.getElementById('ed_fb').value,
+      ta: document.getElementById('ed_ta').value,
+    }
+  };
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'restaurant-config.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importConfig() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function() {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const config = JSON.parse(e.target.result);
+        // Apply colors
+        if (config.colors) {
+          Object.entries({ accent: '--color-accent', bg: '--color-bg', text: '--color-text', primary: '--color-primary', bgAlt: '--color-bg-alt' }).forEach(([key, cssVar]) => {
+            if (config.colors[key]) {
+              updateColor(cssVar, config.colors[key]);
+              const inputId = 'ed_color' + key.charAt(0).toUpperCase() + key.slice(1);
+              const el = document.getElementById(inputId);
+              if (el) el.value = config.colors[key];
+            }
+          });
+        }
+        // Apply fonts
+        if (config.fonts) {
+          if (config.fonts.heading) { document.getElementById('ed_fontHeading').value = config.fonts.heading; updateFont('heading', config.fonts.heading); }
+          if (config.fonts.body) { document.getElementById('ed_fontBody').value = config.fonts.body; updateFont('body', config.fonts.body); }
+        }
+        // Apply content
+        if (config.content) {
+          Object.entries(config.content).forEach(([key, val]) => {
+            const input = document.getElementById('ed_' + key);
+            if (input) { input.value = val; input.dispatchEvent(new Event('change')); }
+          });
+        }
+        // Apply menu
+        if (config.menuItems) {
+          menuItems = config.menuItems;
+          renderMenu();
+          renderMenuEditor();
+        }
+        // Apply social
+        if (config.social) {
+          ['ig','fb','ta'].forEach(k => {
+            if (config.social[k]) document.getElementById('ed_' + k).value = config.social[k];
+          });
+        }
+        alert('✅ Configuración cargada');
+      } catch(err) {
+        alert('Error al cargar el archivo: ' + err.message);
+      }
+    };
+    reader.readAsText(input.files[0]);
+  };
+  input.click();
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+renderMenu();
+renderMenuEditor();
+</script>
+
+</body>
+</html>
